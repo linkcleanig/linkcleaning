@@ -82,53 +82,20 @@
       import React from 'react';
       import { createRoot } from 'react-dom/client';
 
-      // 화면에 그려질 실제 내용
       function App() {
         return (
-          <div className="flex flex-col items-center justify-center min-h-screen text-center bg-sky-custom">
-            <h1 className="text-5xl font-bold text-[#8E24AA] animate-bob">
-              링크클린
-            </h1>
-            <p className="mt-6 text-xl text-slate-800 font-medium">
-              제주 프리미엄 청소 서비스 <br/> 홈페이지를 준비 중입니다.
-            </p>
-            <div className="mt-10 p-4 bg-white/50 rounded-full animate-twinkle shadow-lg">
-               ✨ 곧 새로운 모습으로 찾아뵙겠습니다 ✨
-            </div>
-          </div>
+          React.createElement('div', { className: 'flex flex-col items-center justify-center min-h-screen text-center bg-sky-custom' },
+            React.createElement('h1', { className: 'text-5xl font-bold text-[#8E24AA] animate-bob' }, '링크클린'),
+            React.createElement('p', { className: 'mt-6 text-xl text-slate-800 font-medium' }, 
+              '제주 프리미엄 청소 서비스', React.createElement('br'), '홈페이지를 준비 중입니다.'
+            ),
+            React.createElement('div', { className: 'mt-10 p-4 bg-white/50 rounded-full shadow-lg' }, '✨ 곧 새로운 모습으로 찾아뵙겠습니다 ✨')
+          )
         );
       }
 
-      // 명령: 'root'라는 아이디를 가진 곳에 App을 그려라!
-      const root = createRoot(document.getElementById('root'));
-      root.render(React.createElement(App));
-    </script>
-<script type="module">
-      import React from 'react';
-      import { createRoot } from 'react-dom/client';
-
-      // 화면에 그려질 실제 내용
-      function App() {
-        return (
-          <div className="flex flex-col items-center justify-center min-h-screen text-center bg-sky-custom">
-            <h1 className="text-5xl font-bold text-[#8E24AA] animate-bob">
-              링크클린
-            </h1>
-            <p className="mt-6 text-xl text-slate-800 font-medium">
-              제주 프리미엄 청소 서비스 <br/> 홈페이지를 준비 중입니다.
-            </p>
-            <div className="mt-10 p-4 bg-white/50 rounded-full animate-twinkle shadow-lg">
-               ✨ 곧 새로운 모습으로 찾아뵙겠습니다 ✨
-            </div>
-          </div>
-        );
-      }
-
-      // 명령: 'root'라는 아이디를 가진 곳에 App을 그려라!
       const root = createRoot(document.getElementById('root'));
       root.render(React.createElement(App));
     </script>
   </body>
-</html>
-    </body>
 </html>
