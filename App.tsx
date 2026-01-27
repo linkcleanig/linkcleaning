@@ -48,7 +48,8 @@ import {
   Medal,
   ThumbsUp,
   Wind,
-  Smile
+  Smile,
+  ImagePlus
 } from 'lucide-react';
 
 import { 
@@ -66,6 +67,16 @@ import {
   INITIAL_PORTFOLIO,
   LUCKY_DAYS_DATA
 } from './constants';
+
+// --- Utility Functions ---
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+};
 
 // --- Global Context Mock ---
 const useStore = () => {
@@ -355,7 +366,7 @@ const FloatingSideContact: React.FC<{ settings: SiteSettings }> = ({ settings })
             <Sparkles size={12} className="text-yellow-400 animate-pulse" />
           </div>
         </div>
-        <div className="absolute -top-8 bg-white px-3 py-1 rounded-full shadow-lg border border-purple-50 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+        <div className="absolute -top-8 bg-white px-3 py-1 rounded-full shadow-lg border border-purple-50 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[60]">
           <span className="text-[10px] font-black text-purple-custom italic">"오늘도 깨끗하게!"</span>
         </div>
       </div>
@@ -364,30 +375,36 @@ const FloatingSideContact: React.FC<{ settings: SiteSettings }> = ({ settings })
         href={settings.kakaoLink} 
         target="_blank" 
         rel="noopener noreferrer"
-        className="animate-bob w-14 h-14 bg-[#FEE500] rounded-full shadow-lg flex items-center justify-center text-[#3c1e1e] hover:scale-110 transition-transform group relative"
+        className="animate-bob w-14 h-14 bg-[#FEE500] rounded-full shadow-lg flex items-center justify-center text-[#3c1e1e] hover:scale-110 transition-transform group relative z-50"
       >
         <MessageSquare size={24} fill="currentColor" />
-        <span className="absolute right-full mr-3 bg-white px-2 py-1 rounded text-xs font-bold shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">카카오톡 문의</span>
+        <span className="absolute right-full mr-3 bg-white px-2 py-1 rounded-lg text-xs font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-slate-900 border border-slate-100 z-[60] pointer-events-none">
+          카카오톡 문의
+        </span>
       </a>
 
       <a 
         href={settings.naverTalkLink} 
         target="_blank" 
         rel="noopener noreferrer"
-        className="animate-bob-delayed w-14 h-14 bg-[#03C75A] rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform group relative"
+        className="animate-bob-delayed w-14 h-14 bg-[#03C75A] rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform group relative z-50"
       >
         <MessageSquare size={24} />
-        <span className="absolute right-full mr-3 bg-white px-2 py-1 rounded text-xs font-bold shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">네이버 톡톡</span>
+        <span className="absolute right-full mr-3 bg-white px-2 py-1 rounded-lg text-xs font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-slate-900 border border-slate-100 z-[60] pointer-events-none">
+          네이버 톡톡
+        </span>
       </a>
 
       <a 
         href={settings.instagramLink} 
         target="_blank" 
         rel="noopener noreferrer"
-        className="animate-bob-more-delayed w-14 h-14 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform group relative"
+        className="animate-bob-more-delayed w-14 h-14 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform group relative z-50"
       >
         <Instagram size={24} />
-        <span className="absolute right-full mr-3 bg-white px-2 py-1 rounded text-xs font-bold shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">인스타그램</span>
+        <span className="absolute right-full mr-3 bg-white px-2 py-1 rounded-lg text-xs font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-slate-900 border border-slate-100 z-[60] pointer-events-none">
+          인스타그램
+        </span>
       </a>
     </div>
   );
@@ -849,13 +866,32 @@ const Portfolio: React.FC<{ portfolio: PortfolioItem[]; setPortfolio: React.Disp
   const [showForm, setShowForm] = useState(false);
   const [newPf, setNewPf] = useState<Partial<PortfolioItem>>({
     title: '', description: '', category: '입주청소', majorCategory: MajorCategory.PROFESSIONAL,
-    beforeImg: 'https://images.unsplash.com/photo-1581578731522-745d05db9a26?auto=format&fit=crop&q=80&w=800',
-    afterImg: 'https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=crop&q=80&w=800'
+    beforeImg: '',
+    afterImg: ''
   });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      try {
+        const base64 = await fileToBase64(file);
+        setNewPf(prev => ({ ...prev, [type === 'before' ? 'beforeImg' : 'afterImg']: base64 }));
+      } catch (err) {
+        alert("이미지 로딩 중 오류가 발생했습니다.");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
 
   const handleGuestSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPf.title) return;
+    if (!newPf.title || !newPf.beforeImg || !newPf.afterImg) {
+      alert("모든 항목과 사진 2장을 등록해주세요.");
+      return;
+    }
     const item: PortfolioItem = {
       id: Date.now().toString(),
       title: `[고객후기] ${newPf.title}`,
@@ -868,7 +904,7 @@ const Portfolio: React.FC<{ portfolio: PortfolioItem[]; setPortfolio: React.Disp
     };
     setPortfolio([item, ...portfolio]);
     setShowForm(false);
-    setNewPf({ title: '', description: '' });
+    setNewPf({ title: '', description: '', beforeImg: '', afterImg: '' });
     alert("소중한 시공 사례/후기가 등록되었습니다!");
   };
 
@@ -902,23 +938,49 @@ const Portfolio: React.FC<{ portfolio: PortfolioItem[]; setPortfolio: React.Disp
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">서비스 분류</label>
                   <select value={newPf.category} onChange={e => setNewPf({...newPf, category: e.target.value as ServiceCategory})} className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none font-bold">
+                    <option value="입주청소">입주청소</option>
+                    <option value="이사청소">이사청소</option>
                     <option value="전문청소">전문청소</option>
                     <option value="특수청소">특수청소</option>
-                    <option value="예방시공">예방시공</option>
                     <option value="가전청소">가전청소</option>                   
                   </select>
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                {/* Before Image Upload */}
+                <div className="relative group aspect-video rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden bg-slate-50 hover:border-purple-300 transition-colors">
+                  {newPf.beforeImg ? (
+                    <img src={newPf.beforeImg} className="w-full h-full object-cover" alt="Before Preview" />
+                  ) : (
+                    <div className="text-center p-4">
+                      <ImagePlus size={32} className="mx-auto text-slate-300 mb-2" />
+                      <p className="text-[10px] font-bold text-slate-400">시공 전 사진 (BEFORE)</p>
+                    </div>
+                  )}
+                  <input required type="file" accept="image/*" onChange={e => handleFileChange(e, 'before')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                </div>
+                {/* After Image Upload */}
+                <div className="relative group aspect-video rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center overflow-hidden bg-slate-50 hover:border-purple-300 transition-colors">
+                  {newPf.afterImg ? (
+                    <img src={newPf.afterImg} className="w-full h-full object-cover" alt="After Preview" />
+                  ) : (
+                    <div className="text-center p-4">
+                      <ImagePlus size={32} className="mx-auto text-slate-300 mb-2" />
+                      <p className="text-[10px] font-bold text-slate-400">시공 후 사진 (AFTER)</p>
+                    </div>
+                  )}
+                  <input required type="file" accept="image/*" onChange={e => handleFileChange(e, 'after')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">만족하셨던 점/내용</label>
                 <textarea required rows={4} value={newPf.description} onChange={e => setNewPf({...newPf, description: e.target.value})} placeholder="청소 후 바뀐 공간의 느낌을 적어주세요." className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-purple-200"></textarea>
               </div>
-              <div className="p-6 bg-sky-50 rounded-2xl border-2 border-dashed border-sky-200 text-center">
-                 <Upload size={32} className="mx-auto text-sky-400 mb-2" />
-                 <p className="text-sm text-slate-500">현재 샘플 이미지로 자동 등록됩니다.<br/>(실제 서비스 시 파일 업로드 기능이 활성화됩니다.)</p>
-              </div>
-              <button type="submit" className="w-full py-5 bg-slate-900 text-white font-black text-xl rounded-2xl shadow-xl hover:bg-purple-custom transition-all">
-                포트폴리오 등록하기
+
+              <button type="submit" disabled={isUploading} className="w-full py-5 bg-slate-900 text-white font-black text-xl rounded-2xl shadow-xl hover:bg-purple-custom transition-all disabled:opacity-50">
+                {isUploading ? "이미지 처리 중..." : "포트폴리오 등록하기"}
               </button>
             </form>
           </div>
@@ -946,13 +1008,48 @@ const Portfolio: React.FC<{ portfolio: PortfolioItem[]; setPortfolio: React.Disp
 
 const Admin: React.FC<{ settings: SiteSettings; setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>; inquiries: Inquiry[]; portfolio: PortfolioItem[]; setPortfolio: React.Dispatch<React.SetStateAction<PortfolioItem[]>>; services: ServiceInfo[] }> = ({ settings, setSettings, inquiries, portfolio, setPortfolio, services }) => {
   const [tab, setTab] = useState<'general' | 'inquiries' | 'portfolio'>('general');
-  const [newPf, setNewPf] = useState<Partial<PortfolioItem>>({ title: '', description: '', category: '입주청소', majorCategory: MajorCategory.PROFESSIONAL, beforeImg: 'https://picsum.photos/seed/before/800/600', afterImg: 'https://picsum.photos/seed/after/800/600' });
+  const [newPf, setNewPf] = useState<Partial<PortfolioItem>>({ 
+    title: '', 
+    description: '', 
+    category: '입주청소', 
+    majorCategory: MajorCategory.PROFESSIONAL, 
+    beforeImg: '', 
+    afterImg: '' 
+  });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      try {
+        const base64 = await fileToBase64(file);
+        setNewPf(prev => ({ ...prev, [type === 'before' ? 'beforeImg' : 'afterImg']: base64 }));
+      } catch (err) {
+        alert("이미지 로딩 오류");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
 
   const addPortfolio = () => {
-    if (!newPf.title) return;
-    const item: PortfolioItem = { id: Date.now().toString(), title: newPf.title!, description: newPf.description || '', category: newPf.category as ServiceCategory, majorCategory: newPf.majorCategory as MajorCategory, beforeImg: newPf.beforeImg!, afterImg: newPf.afterImg!, date: new Date().toLocaleDateString() };
+    if (!newPf.title || !newPf.beforeImg || !newPf.afterImg) {
+      alert("모든 정보와 이미지를 입력해주세요.");
+      return;
+    }
+    const item: PortfolioItem = { 
+      id: Date.now().toString(), 
+      title: newPf.title!, 
+      description: newPf.description || '', 
+      category: newPf.category as ServiceCategory, 
+      majorCategory: newPf.majorCategory as MajorCategory, 
+      beforeImg: newPf.beforeImg!, 
+      afterImg: newPf.afterImg!, 
+      date: new Date().toLocaleDateString() 
+    };
     setPortfolio([item, ...portfolio]);
-    setNewPf({ title: '', description: '' });
+    setNewPf({ title: '', description: '', beforeImg: '', afterImg: '' });
   };
 
   const deletePortfolio = (id: string) => setPortfolio(portfolio.filter(p => p.id !== id));
@@ -968,14 +1065,30 @@ const Admin: React.FC<{ settings: SiteSettings; setSettings: React.Dispatch<Reac
             <button key={t} onClick={() => setTab(t as any)} className={`px-6 py-2 rounded-xl font-bold shadow-sm whitespace-nowrap ${tab === t ? 'bg-purple-custom text-white' : 'bg-white text-slate-600'}`}>{t === 'general' ? '기본설정' : t === 'inquiries' ? '상담현황' : '포트폴리오관리'}</button>
           ))}
         </div>
+        
         {tab === 'portfolio' && (
           <div className="space-y-10">
             <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
               <h2 className="text-xl font-bold mb-8">시공 사례 등록</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <input type="text" value={newPf.title} onChange={e => setNewPf({...newPf, title: e.target.value})} placeholder="제목" className="w-full p-4 border rounded-xl" />
-                <button onClick={addPortfolio} className="py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg">게시하기</button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                <div className="space-y-4">
+                  <input type="text" value={newPf.title} onChange={e => setNewPf({...newPf, title: e.target.value})} placeholder="사례 제목" className="w-full p-4 border rounded-xl" />
+                  <textarea value={newPf.description} onChange={e => setNewPf({...newPf, description: e.target.value})} placeholder="내용" className="w-full p-4 border rounded-xl" rows={3} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative aspect-square border-2 border-dashed rounded-xl flex items-center justify-center overflow-hidden bg-slate-50">
+                    {newPf.beforeImg ? <img src={newPf.beforeImg} className="w-full h-full object-cover" /> : <div className="text-center text-[10px] font-bold">BEFORE 사진</div>}
+                    <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'before')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                  </div>
+                  <div className="relative aspect-square border-2 border-dashed rounded-xl flex items-center justify-center overflow-hidden bg-slate-50">
+                    {newPf.afterImg ? <img src={newPf.afterImg} className="w-full h-full object-cover" /> : <div className="text-center text-[10px] font-bold">AFTER 사진</div>}
+                    <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'after')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                  </div>
+                </div>
               </div>
+              <button onClick={addPortfolio} disabled={isUploading} className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg hover:bg-purple-custom transition-all">
+                {isUploading ? "이미지 업로드 중..." : "게시하기"}
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {portfolio.map(p => (
