@@ -681,8 +681,8 @@ const Home: React.FC<{ settings: SiteSettings; services: ServiceInfo[]; portfoli
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
             <div className="text-center md:text-left">
-              <h2 className="text-2xl md:text-4xl font-bold text-slate-900">시공 전후 <span className="text-purple-custom">리얼 데이터</span></h2>
-              <p className="text-slate-500 text-sm mt-1">링크클린의 정직한 시공 사례입니다.</p>
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-900">링크클린의 <span className="text-purple-custom">대표 시공이미지</span></h2>
+              <p className="text-slate-500 text-sm mt-1">완벽한 청소의 증거!</p>
             </div>
             <Link to="/portfolio" className="text-purple-custom text-sm font-bold flex items-center">
               전체 보기 <ArrowRight className="ml-1 w-4 h-4" />
