@@ -12,49 +12,49 @@ import {
   X, 
   Phone, 
   MapPin, 
-  ArrowLeft,
-  ArrowRight,
-  Plus,
-  Trash2,
-  CheckCircle,
-  Clock,
-  ExternalLink,
-  ChevronRight,
-  Sparkles,
-  Building2,
-  UserCheck,
-  ChevronsLeftRight,
-  Droplets,
-  Paintbrush,
-  CalendarDays,
-  Flame,
-  Zap,
-  ShieldCheck,
-  Box,
-  Instagram,
-  Calendar,
-  ChevronDown,
-  Star,
-  Award,
-  Users,
-  Target,
-  Loader2,
-  Camera,
-  Upload,
-  Edit3,
-  Waves,
-  Heart,
-  Shield,
-  Leaf,
-  Medal,
-  ThumbsUp,
-  Wind,
-  Smile,
-  ImagePlus,
-  ArrowRightCircle,
-  Stethoscope,
-  Microscope,
-  Cpu
+  ArrowLeft, 
+  ArrowRight, 
+  Plus, 
+  Trash2, 
+  CheckCircle, 
+  Clock, 
+  ExternalLink, 
+  ChevronRight, 
+  Sparkles, 
+  Building2, 
+  UserCheck, 
+  ChevronsLeftRight, 
+  Droplets, 
+  Paintbrush, 
+  CalendarDays, 
+  Flame, 
+  Zap, 
+  ShieldCheck, 
+  Box, 
+  Instagram, 
+  Calendar, 
+  ChevronDown, 
+  Star, 
+  Award, 
+  Users, 
+  Target, 
+  Loader2, 
+  Camera, 
+  Upload, 
+  Edit3, 
+  Waves, 
+  Heart, 
+  Shield, 
+  Leaf, 
+  Medal, 
+  ThumbsUp, 
+  Wind, 
+  Smile, 
+  ImagePlus, 
+  ArrowRightCircle, 
+  Stethoscope, 
+  Microscope, 
+  Cpu 
 } from 'lucide-react';
 
 import { 
@@ -208,17 +208,24 @@ const InteractiveVacuum: React.FC = () => {
   );
 };
 
-const MainLogo: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
+const MainLogo: React.FC<{ settings: SiteSettings; size?: 'sm' | 'md' | 'lg' }> = ({ settings, size = 'md' }) => {
   const containerClasses = {
-    sm: 'w-8 h-8 md:w-10 md:h-10',
-    md: 'w-10 h-10 md:w-12 md:h-12',
-    lg: 'w-12 h-12 md:w-16 md:h-16'
+    sm: 'w-10 h-10 md:w-14 md:h-14',
+    md: 'w-14 h-14 md:w-20 md:h-20',
+    lg: 'w-24 h-24 md:w-32 md:h-32'
   };
-  const iconSizes = { sm: 14, md: 18, lg: 24 };
+  const iconSizes = { sm: 20, md: 32, lg: 48 };
+
   return (
-    <div className={`relative flex items-center justify-center rounded-xl md:rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 shadow-lg overflow-hidden group transition-all duration-500 ${containerClasses[size]}`}>
-      <Sparkles size={iconSizes[size]} className="text-white z-10 animate-pulse" />
-      <div className="absolute inset-0 border border-white/20 rounded-xl md:rounded-2xl"></div>
+    <div className={`relative flex items-center justify-center rounded-2xl md:rounded-3xl bg-white shadow-lg overflow-hidden group transition-all duration-500 border border-slate-100 p-1.5 ${containerClasses[size]}`}>
+      {settings.logoUrl ? (
+        <img src={settings.logoUrl} alt={settings.siteName} className="w-full h-full object-contain" />
+      ) : (
+        <div className="w-full h-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center rounded-xl md:rounded-2xl">
+          <Sparkles size={iconSizes[size]} className="text-white z-10 animate-pulse" />
+        </div>
+      )}
+      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
     </div>
   );
 };
@@ -322,10 +329,14 @@ const LuckyDaysCalendar: React.FC<{ settings: SiteSettings }> = ({ settings }) =
 const FloatingSideContact: React.FC<{ settings: SiteSettings }> = ({ settings }) => {
   return (
     <div className="fixed right-4 md:right-6 bottom-24 md:bottom-32 z-50 flex flex-col space-y-4 items-center">
-      {/* 상단 청소기 아이콘 및 말풍선 */}
+      {/* 상단 캐릭터 마스코트 애니메이션 */}
       <div className="group relative flex flex-col items-center mb-1">
-        <div className="animate-bob relative p-1.5 md:p-2 bg-white rounded-xl md:rounded-2xl shadow-xl border border-purple-100">
-          <IconicVacuum className="w-8 h-8 md:w-12 md:h-12 text-purple-custom" />
+        <div className="animate-bob relative p-1 md:p-1.5 bg-white rounded-2xl shadow-2xl border-2 border-purple-50 flex items-center justify-center overflow-hidden w-12 h-12 md:w-16 md:h-16">
+          {settings.logoUrl ? (
+             <img src={settings.logoUrl} className="w-full h-full object-contain" />
+          ) : (
+            <IconicVacuum className="w-8 h-8 md:w-12 md:h-12 text-purple-custom" />
+          )}
         </div>
         <span className="hidden md:block absolute right-full mr-4 bg-white px-3 py-2 rounded-xl text-[11px] font-black text-purple-custom shadow-2xl opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 whitespace-nowrap border-2 border-purple-50">
           반짝반짝 링크클린! ✨
@@ -505,15 +516,15 @@ const Header: React.FC<{ settings: SiteSettings }> = ({ settings }) => {
     <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-sky-100">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
-          <Link to="/" className="flex items-center space-x-2 md:space-x-3">
-            <MainLogo size="sm" />
-            <span className="text-base md:text-xl font-extrabold text-slate-900">{settings.siteName}</span>
+          <Link to="/" className="flex items-center space-x-2 md:space-x-4">
+            <MainLogo settings={settings} size="sm" />
+            <span className="text-base md:text-xl font-extrabold text-slate-900 truncate max-w-[120px] md:max-w-none">{settings.siteName}</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link key={link.path} to={link.path} className={`text-sm font-medium ${location.pathname === link.path ? 'text-purple-custom font-bold border-b-2 border-purple-custom pb-1' : 'text-slate-600'}`}>{link.name}</Link>
             ))}
-            <Link to="/admin" className="p-2 text-slate-300 hover:text-purple-custom"><Settings size={18} /></Link>
+            <Link to="/admin" className="p-2 text-slate-300 hover:text-purple-custom transition-colors"><Settings size={18} /></Link>
           </nav>
           <div className="md:hidden flex items-center space-x-4">
             <Link to="/admin" className="text-slate-300"><Settings size={20} /></Link>
@@ -538,9 +549,9 @@ const Footer: React.FC<{ settings: SiteSettings }> = ({ settings }) => {
   return (
     <footer className="bg-slate-900 text-slate-400 py-12 md:py-16 relative z-10">
       <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <MainLogo size="sm" />
+        <div className="flex flex-col items-start">
+          <div className="flex items-center space-x-4 mb-4">
+            <MainLogo settings={settings} size="sm" />
             <span className="text-xl font-bold text-white tracking-tight">{settings.siteName}</span>
           </div>
           <p className="text-sm leading-relaxed max-w-sm">제주 전역의 쾌적한 환경을 위해 프리미엄 장비와 친환경 세제로 최상의 서비스를 약속합니다.</p>
@@ -572,16 +583,23 @@ const Home: React.FC<{ settings: SiteSettings; services: ServiceInfo[]; portfoli
   return (
     <div className="animate-in fade-in duration-500 relative z-10">
       {/* Hero Section */}
-      <section className="relative h-[70vh] md:h-[85vh] flex items-center overflow-hidden">
+      <section className="relative h-[75vh] md:h-[90vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src="https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?auto=format&fit=crop&q=80&w=2070" alt="Jeju" className="w-full h-full object-cover scale-110 brightness-75" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-slate-900/30 to-slate-900/80"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/40 to-slate-900/90"></div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-white w-full text-center">
           <div className="max-w-4xl mx-auto flex flex-col items-center">
             {/* 텍스트 보호를 위한 은은한 글래스모피즘 박스 */}
-            <div className="bg-black/10 backdrop-blur-[2px] p-6 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
-              <span className="inline-block px-4 py-1.5 mb-6 bg-purple-custom/40 border border-white/30 text-[10px] md:text-xs font-black tracking-[0.2em] uppercase rounded-full shadow-lg">
+            <div className="bg-black/20 backdrop-blur-[3px] p-6 md:p-14 rounded-[3.5rem] border border-white/10 shadow-2xl relative">
+              {/* 캐릭터 마스코트 배치 (제공된 이미지) */}
+              {settings.logoUrl && (
+                <div className="absolute -top-20 md:-top-32 right-0 md:-right-16 animate-bob w-24 h-24 md:w-56 md:h-56 drop-shadow-[0_0_20px_rgba(255,255,255,0.6)]">
+                   <img src={settings.logoUrl} className="w-full h-full object-contain filter drop-shadow-lg" />
+                </div>
+              )}
+              
+              <span className="inline-block px-4 py-1.5 mb-6 bg-purple-custom/50 border border-white/30 text-[10px] md:text-xs font-black tracking-[0.2em] uppercase rounded-full shadow-lg">
                 Jeju Premium Cleaning Solution
               </span>
               <h1 className="text-4xl md:text-7xl font-extrabold mb-8 leading-[1.3] text-shadow-strong">
@@ -898,13 +916,17 @@ const Admin: React.FC<{ settings: SiteSettings; setSettings: React.Dispatch<Reac
   const [newPf, setNewPf] = useState<Partial<PortfolioItem>>({ title: '', description: '', category: '입주청소', majorCategory: MajorCategory.PROFESSIONAL, beforeImg: '', afterImg: '' });
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after') => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>, type: 'before' | 'after' | 'logo') => {
     const file = e.target.files?.[0];
     if (file) {
       setIsUploading(true);
       try {
         const base64 = await fileToBase64(file);
-        setNewPf(prev => ({ ...prev, [type === 'before' ? 'beforeImg' : 'afterImg']: base64 }));
+        if (type === 'logo') {
+          setSettings(prev => ({ ...prev, logoUrl: base64 }));
+        } else {
+          setNewPf(prev => ({ ...prev, [type === 'before' ? 'beforeImg' : 'afterImg']: base64 }));
+        }
       } catch (err) { alert("이미지 로딩 오류"); }
       finally { setIsUploading(false); }
     }
@@ -943,10 +965,59 @@ const Admin: React.FC<{ settings: SiteSettings; setSettings: React.Dispatch<Reac
           ))}
         </div>
 
+        {tab === 'general' && (
+          <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border space-y-8">
+             <div>
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-2 font-black text-slate-900"><Camera size={20} className="text-purple-custom" /> 로고 및 마스코트 이미지 관리</h2>
+              <div className="flex flex-col md:flex-row items-center gap-10">
+                <div className="relative w-48 h-48 md:w-64 md:h-64 border-4 border-dashed rounded-[2.5rem] flex items-center justify-center bg-slate-50 overflow-hidden group shadow-inner">
+                  {settings.logoUrl ? (
+                    <img src={settings.logoUrl} className="w-full h-full object-contain p-4" />
+                  ) : (
+                    <div className="text-slate-300 text-center flex flex-col items-center">
+                      <ImageIcon size={50} />
+                      <span className="text-xs mt-3 font-bold">마스코트 없음</span>
+                    </div>
+                  )}
+                  <label className="absolute inset-0 bg-black/50 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity backdrop-blur-sm">
+                    <Camera size={32} />
+                    <span className="text-sm mt-2 font-black">이미지 변경</span>
+                    <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'logo')} className="hidden" />
+                  </label>
+                </div>
+                <div className="flex-1 space-y-4">
+                  <div className="p-5 bg-purple-50 rounded-2xl border border-purple-100">
+                    <p className="mb-2 font-black text-purple-custom flex items-center gap-2"><Sparkles size={16} /> 업로드 가이드</p>
+                    <ul className="list-disc list-inside space-y-2 text-xs md:text-sm text-slate-600 font-medium">
+                      <li>보내주신 캐릭터 만화 이미지를 여기에 등록하세요.</li>
+                      <li>배경이 투명한 파일(PNG)을 사용하시면 배경과 더 잘 어우러집니다.</li>
+                      <li>등록 즉시 메인 화면 글자 옆에 마스코트가 나타납니다!</li>
+                    </ul>
+                  </div>
+                  <div className="flex gap-2">
+                     <button onClick={() => setSettings({...settings, logoUrl: ''})} className="px-4 py-2 bg-slate-100 text-slate-500 text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors">이미지 초기화</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-2">사이트 이름</label>
+                <input type="text" value={settings.siteName} onChange={e => setSettings({...settings, siteName: e.target.value})} className="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-purple-200 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 mb-2">대표 연락처</label>
+                <input type="text" value={settings.phone} onChange={e => setSettings({...settings, phone: e.target.value})} className="w-full px-4 py-3 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-purple-200 outline-none" />
+              </div>
+            </div>
+          </div>
+        )}
+
         {tab === 'portfolio' && (
           <div className="space-y-8">
             <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border">
-              <h2 className="text-lg font-bold mb-6 flex items-center gap-2"><Upload size={20} /> 새 시공 사례 등록 (바탕화면 사진 올리기)</h2>
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-2"><Upload size={20} /> 새 시공 사례 등록</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="space-y-4">
                   <div>
@@ -960,16 +1031,16 @@ const Admin: React.FC<{ settings: SiteSettings; setSettings: React.Dispatch<Reac
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-400 mb-1 text-center">BEFORE (파일 선택)</label>
+                    <label className="block text-xs font-bold text-slate-400 mb-1 text-center">BEFORE</label>
                     <div className="relative aspect-square border-2 border-dashed rounded-xl flex items-center justify-center bg-slate-50 overflow-hidden hover:bg-slate-100 transition-colors">
-                      {newPf.beforeImg ? <img src={newPf.beforeImg} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center text-slate-300"><ImageIcon size={30} /><span className="text-[10px] mt-2">클릭하여 선택</span></div>}
+                      {newPf.beforeImg ? <img src={newPf.beforeImg} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center text-slate-300"><ImageIcon size={30} /><span className="text-[10px] mt-2">파일 선택</span></div>}
                       <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'before')} className="absolute inset-0 opacity-0 cursor-pointer" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-400 mb-1 text-center">AFTER (파일 선택)</label>
+                    <label className="block text-xs font-bold text-slate-400 mb-1 text-center">AFTER</label>
                     <div className="relative aspect-square border-2 border-dashed rounded-xl flex items-center justify-center bg-slate-50 overflow-hidden hover:bg-slate-100 transition-colors">
-                      {newPf.afterImg ? <img src={newPf.afterImg} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center text-slate-300"><ImageIcon size={30} /><span className="text-[10px] mt-2">클릭하여 선택</span></div>}
+                      {newPf.afterImg ? <img src={newPf.afterImg} className="w-full h-full object-cover" /> : <div className="flex flex-col items-center text-slate-300"><ImageIcon size={30} /><span className="text-[10px] mt-2">파일 선택</span></div>}
                       <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'after')} className="absolute inset-0 opacity-0 cursor-pointer" />
                     </div>
                   </div>
@@ -981,7 +1052,7 @@ const Admin: React.FC<{ settings: SiteSettings; setSettings: React.Dispatch<Reac
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border">
-              <h2 className="text-lg font-bold mb-6">현재 등록된 사례 (상위 2개가 메인에 노출됩니다)</h2>
+              <h2 className="text-lg font-bold mb-6">현재 등록된 사례</h2>
               <div className="grid grid-cols-1 gap-4">
                 {portfolio.map(p => (
                   <div key={p.id} className="flex items-center gap-4 p-4 border rounded-xl hover:bg-slate-50 transition-colors">
